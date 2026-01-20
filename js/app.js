@@ -1,156 +1,94 @@
-// app.js - WebGIS Kost Inklusif Mahasiswa Papua di Depok Sleman
+// app.js - update bagian ini saja
 
-// Inisialisasi peta, fokus ke area Depok Sleman (pusat sekitar UGM/UNY)
-const map = L.map('map').setView([-7.769, 110.408], 14);  // Zoom level 14 cukup detail
+// Inisialisasi peta dengan view awal
+const map = L.map('map', {
+  // Opsi tetap, tapi turunkan minZoom sedikit agar bisa zoom out lebih fleksibel tanpa bug
+  minZoom: 12,              // <--- ubah ke 12 (masih batasi, tapi tidak terlalu ketat agar zoom in/out lancar)
+  maxZoom: 18,
+  zoomControl: true,
+  attributionControl: true
+}).setView([-7.769, 110.408], 14);  // view awal tetap
 
-// Tambahkan tile layer dari OpenStreetMap (gratis, no API key)
+// Tile layer tetap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Data kost - gunakan array ini dulu (hardcoded, mudah diedit)
-const kostData = [
-  {
-    id: 1,
-    nama: "Kost Buk Nur ITNY",
-    alamat: "Jl. Kaliurang Km 5, Karangwuni, Caturtunggal, Depok, Sleman, Yogyakarta",
-    lat: -7.771882023742445, 
-    lng: 110.41676663637934,
-    harga: "Rp 600.000 / bulan",
-    fasilitas: ["WiFi", "AC", "Kamar Mandi Dalam", "Dapur Bersama", "Parkir"],
-    status_penerimaan: "Menerima Mahasiswa (verif manual untuk Papua)",
-    jarak_kampus: "Dekat UGM (~2 km)",
-    foto: "assets/kos1.jpg"  
-  },
+// Batasi wilayah (bounds tetap rapat, tapi tambah padding agar popup & zoom in tidak terpotong)
+const southWest = L.latLng(-7.82, 110.36);
+const northEast = L.latLng(-7.71, 110.44);
+const bounds = L.latLngBounds(southWest, northEast);
 
-  {
-    id: 2,
-    nama: "Kost Mahasiswa Depok",
-    alamat: "Gg. Pogung, Caturtunggal, Depok, Sleman",
-    lat: -7.7705,
-    lng: 110.4150,
-    harga: "Rp 750.000 / bulan",
-    fasilitas: ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
-    status_penerimaan: "Menerima semua mahasiswa termasuk dari Papua",
-    jarak_kampus: "Dekat UNY (~1.5 km)",
-    foto: "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
-  },
+map.setMaxBounds(bounds.pad(1.5));  // <--- tambah .pad(0.5) untuk padding 50% lebih lebar, agar zoom in & popup punya ruang
+map.options.maxBoundsViscosity = 1.0;  // tetap lengket
 
-  {
-    id: 3,
-    nama: "Kost Mahasiswa Depok",
-    alamat: "Gg. Pogung, Caturtunggal, Depok, Sleman",
-    lat: -7.7705,
-    lng: 110.4150,
-    harga: "Rp 750.000 / bulan",
-    fasilitas: ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
-    status_penerimaan: "Menerima semua mahasiswa termasuk dari Papua",
-    jarak_kampus: "Dekat UNY (~1.5 km)",
-    foto: "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
-  },
+// Load data dari JSON
+let kostData = [];
+let allMarkers = L.layerGroup().addTo(map);  // grup marker supaya mudah difilter nanti
 
-  {
-    id: 4,
-    nama: "Kost Mahasiswa Depok",
-    alamat: "Gg. Pogung, Caturtunggal, Depok, Sleman",
-    lat: -7.77011,
-    lng: 110.4160,
-    harga: "Rp 750.000 / bulan",
-    fasilitas: ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
-    status_penerimaan: "Menerima semua mahasiswa termasuk dari Papua",
-    jarak_kampus: "Dekat UNY (~1.5 km)",
-    foto: "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
-  },
-  {
-    id: 5,
-    nama: "Kost Mahasiswa Depok",
-    alamat: "Gg. Pogung, Caturtunggal, Depok, Sleman",
-    lat: -7.7720,
-    lng: 110.4170,
-    harga: "Rp 750.000 / bulan",
-    fasilitas: ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
-    status_penerimaan: "Menerima semua mahasiswa termasuk dari Papua",
-    jarak_kampus: "Dekat UNY (~1.5 km)",
-    foto: "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
-  },
-  {
-    id: 6,
-    nama: "Kost Mahasiswa Depok",
-    alamat: "Gg. Pogung, Caturtunggal, Depok, Sleman",
-    lat: -7.7730,
-    lng: 110.4175,
-    harga: "Rp 750.000 / bulan",
-    fasilitas: ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
-    status_penerimaan: "Menerima semua mahasiswa termasuk dari Papua",
-    jarak_kampus: "Dekat UNY (~1.5 km)",
-    foto: "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
-  },
-  {
-    id: 7,
-    nama: "Kost Mahasiswa Depok",
-    alamat: "Gg. Pogung, Caturtunggal, Depok, Sleman",
-    lat: -7.7740,
-    lng: 110.4180,
-    harga: "Rp 750.000 / bulan",
-    fasilitas: ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
-    status_penerimaan: "Menerima semua mahasiswa termasuk dari Papua",
-    jarak_kampus: "Dekat UNY (~1.5 km)",
-    foto: "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
-  },
-  {
-    id: 8,
-    nama: "Kost Mahasiswa Depok",
-    alamat: "Gg. Pogung, Caturtunggal, Depok, Sleman",
-    lat: -7.7750,
-    lng: 110.4185,
-    harga: "Rp 750.000 / bulan",
-    fasilitas: ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
-    status_penerimaan: "Menerima semua mahasiswa termasuk dari Papua",
-    jarak_kampus: "Dekat UNY (~1.5 km)",
-    foto: "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
-  },
- 
-];
-
-// Render marker untuk setiap kost
-kostData.forEach(kost => {
-  const marker = L.marker([kost.lat, kost.lng]).addTo(map);
-
-  // Tooltip (hover preview) - muncul saat mouse over
-  marker.bindTooltip(`
-    <b>${kost.nama}</b><br>
-    <img src="${kost.foto}" alt="${kost.nama}" 
-         style="width: 200px; height: 150px; object-fit: cover; border-radius: 4px; margin-top: 5px; border: 1px solid #ddd;"
-         onerror="this.src='https://via.placeholder.com/200x150?text=Foto+Tidak+Tersedia';">
-    <br><small> • Klik untuk detail lengkap</small>
-  `, {
-    direction: 'top',
-    permanent: false,         // Hanya saat hover
-    opacity: 0.95,
-    className: 'custom-tooltip',
-    offset: [0, -10]          // Sedikit naik agar tidak nutup marker
+fetch('data/kost.json')
+  .then(response => {
+    if (!response.ok) throw new Error('Gagal load kost.json');
+    return response.json();
+  })
+  .then(data => {
+    kostData = data;
+    renderMarkers(kostData);  // render pertama kali semua marker
+  })
+  .catch(error => {
+    console.error('Error loading kost data:', error);
+    // Optional: tampilkan pesan di map kalau mau
+    map.attributionControl.addAttribution('Error: Data kost gagal dimuat');
   });
 
-  // Popup (klik) - detail lengkap dengan alignment rapi (rata kiri, label bold)
-  marker.bindPopup(`
-    <div style="width: 300px; font-family: Arial, sans-serif; line-height: 1.5;">
-      <h3 style="margin: 0 0 10px; text-align: center; color: #333;">${kost.nama}</h3>
+// Fungsi render marker (dipisah supaya bisa dipanggil ulang saat filter)
+function renderMarkers(filteredData) {
+  allMarkers.clearLayers();  // hapus marker lama
+
+  filteredData.forEach(kost => {
+    const marker = L.marker([kost.lat, kost.lng]);
+
+    // Tooltip sama persis seperti sebelumnya
+    marker.bindTooltip(`
+      <b>${kost.nama}</b><br>
       <img src="${kost.foto}" alt="${kost.nama}" 
-           style="width: 300px; height: 200px; object-fit: cover; display: block; margin: 0 auto 15px; border-radius: 6px; border: 1px solid #ddd;"
-           onerror="this.src='https://via.placeholder.com/300x200?text=Foto+Tidak+Tersedia';">
-      <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: start;">
-        <strong>Alamat:</strong> <span>${kost.alamat}</span>
-        <strong>Harga:</strong> <span>${kost.harga}</span>
-        <strong>Fasilitas:</strong> <span>${kost.fasilitas.join(', ')}</span>
-        <strong>Status Penerimaan:</strong> <span>${kost.status_penerimaan}</span>
-        <strong>Jarak ke Kampus:</strong> <span>${kost.jarak_kampus}</span>
-      </div>
-    </div>
-  `, {
-    maxWidth: 320,
-    closeButton: true
-  });
-});
+           style="width: 200px; height: 150px; object-fit: cover; border-radius: 4px; margin-top: 5px; border: 1px solid #ddd;"
+           onerror="this.src='https://via.placeholder.com/200x150?text=Foto+Tidak+Tersedia';">
+      <br><small> • Klik untuk detail lengkap</small>
+    `, {
+      direction: 'top',
+      permanent: false,
+      opacity: 0.95,
+      className: 'custom-tooltip',
+      offset: [0, -10]
+    });
 
-// Tambah attribution custom
+    // Popup sama persis seperti sebelumnya
+    marker.bindPopup(`
+      <div style="width: 300px; font-family: Arial, sans-serif; line-height: 1.5;">
+        <h3 style="margin: 0 0 10px; text-align: center; color: #333;">${kost.nama}</h3>
+        <img src="${kost.foto}" alt="${kost.nama}" 
+             style="width: 300px; height: 200px; object-fit: cover; display: block; margin: 0 auto 15px; border-radius: 6px; border: 1px solid #ddd;"
+             onerror="this.src='https://via.placeholder.com/300x200?text=Foto+Tidak+Tersedia';">
+        <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: start;">
+          <strong>Nama Pemilik:</strong> <span>${kost.pemilik}</span>
+          <strong>No.Telp:</strong> <span>${kost.Notelp}</span>
+          <strong>Alamat:</strong> <span>${kost.alamat}</span>
+          <strong>Harga:</strong> <span>${kost.harga}</span>
+          <strong>Fasilitas:</strong> <span>${kost.fasilitas.join(', ')}</span>
+          <strong>Status Penerimaan:</strong> <span>${kost.status_penerimaan}</span>
+          <strong>Jarak ke Kampus:</strong> <span>${kost.jarak_kampus}</span>
+        </div>
+      </div>
+    `, {
+      maxWidth: 320,
+      closeButton: true
+    });
+
+    marker.addTo(allMarkers);
+  });
+}
+
+
+// Attribution custom (tetap)
 map.attributionControl.addAttribution('WebGIS Pemetaan Kost Inklusif Mahasiswa Papua | Skripsi 2025');

@@ -1,0 +1,59 @@
+[
+  {
+    "id": 1,
+    "nama": "Kost Putri Pilar Bumi",
+    "pemilik": "Buk Endang",
+    "Notelp": "08175490250",
+    "alamat": "Jl. Tambak Bayan IX No.10b, Tambak Bayan, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281",
+    "lat": -7.778591253573755,
+    "lng": 110.41762180048276,
+    "harga": "Rp 600.000/bulan",
+    "fasilitas": ["WiFi", "Kamar Mandi", "Dapur Bersama", "Parkir"],
+    "status_penerimaan": "Menerima Mahasiswa dari Papua",
+    "jarak_kampus": "Dekat Atma Jaya, UP45, UPN, ITNY, API, STT Nuklir, Stikes.",
+    "foto": "assets/kos1.jpg"
+  },
+  {
+    "id": 2,
+    "nama": "Kost Mahasiswa Depok",
+    "pemilik": "Buk Endang",
+    "Notelp": "08175490250",
+    "alamat": "Gg. Pogung, Caturtunggal, Depok, Sleman",
+    "lat": -7.7705,
+    "lng": 110.4150,
+    "harga": "Rp 750.000 / bulan",
+    "fasilitas": ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
+    "status_penerimaan": "Menerima semua mahasiswa termasuk dari Papua",
+    "jarak_kampus": "Dekat UNY (~1.5 km)",
+    "foto": "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
+  },
+  {
+    "id": 3,
+    "nama": "Kost Mahasiswa wellem",
+    "pemilik": "Buk lilis",
+    "Notelp": "08175490250144",
+    "alamat": "Gg. Pogung, Caturtunggal, Depok, Sleman",
+    "lat": -7.7750,
+    "lng": 110.4190,
+    "harga": "Rp 350.000 / bulan",
+    "fasilitas": ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
+    "status_penerimaan": "Menerima semua mahasiswa termasuk dari Papua",
+    "jarak_kampus": "Dekat UNY (~1.5 km)",
+    "foto": "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
+  },
+  {
+    "id": 4,
+    "nama": "Kost Mahasiswa wellem",
+    "pemilik": "Buk Endang",
+    "Notelp": "08175490250",
+    "alamat": "Gg. Pogung, Caturtunggal, Depok, Sleman",
+    "lat": -7.7755,
+    "lng": 110.4199,
+    "harga": "Rp 350.000 / bulan",
+    "fasilitas": ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
+    "status_penerimaan": "Menerima semua mahasiswa termasuk dari Papua",
+    "jarak_kampus": "Dekat UNY (~1.5 km)",
+    "foto": "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
+  }
+ 
+]
