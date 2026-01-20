@@ -1,30 +1,57 @@
-// app.js - update bagian ini saja
 
 // Inisialisasi peta dengan view awal
 const map = L.map('map', {
-  // Opsi tetap, tapi turunkan minZoom sedikit agar bisa zoom out lebih fleksibel tanpa bug
-  minZoom: 12,              // <--- ubah ke 12 (masih batasi, tapi tidak terlalu ketat agar zoom in/out lancar)
+  //zoom control
+  zoomAnimation: true,                // Aktifkan animasi zoom (default true, tapi pastikan)
+  zoomAnimationThreshold: 4,          // Animasi aktif sampai zoom level berubah >4 (default 4)
+  fadeAnimation: true,                // Fade layer saat zoom (membuat transisi lebih mulus)
+  markerZoomAnimation: true,          // Marker ikut beranimasi saat zoom
+  zoomSnap: 0.25,                     // Zoom snap ke kelipatan 0.25 → transisi lebih halus
+  zoomDelta: 0.5,                     // Setiap scroll wheel zoom lebih kecil → terasa lebih smooth
+  wheelPxPerZoomLevel: 120,
+
+  // max/min zoom in & out
+  minZoom: 12,              
   maxZoom: 18,
   zoomControl: true,
   attributionControl: true
-}).setView([-7.769, 110.408], 14);  // view awal tetap
+}).setView([-7.769, 110.408], 14);  // view awal peta
 
 // Tile layer tetap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Batasi wilayah (bounds tetap rapat, tapi tambah padding agar popup & zoom in tidak terpotong)
+// Batas wilayah peta ke area Yogyakarta)
 const southWest = L.latLng(-7.82, 110.36);
 const northEast = L.latLng(-7.71, 110.44);
 const bounds = L.latLngBounds(southWest, northEast);
 
-map.setMaxBounds(bounds.pad(1.5));  // <--- tambah .pad(0.5) untuk padding 50% lebih lebar, agar zoom in & popup punya ruang
-map.options.maxBoundsViscosity = 1.0;  // tetap lengket
+map.setMaxBounds(bounds.pad(1.5));  //  agar zoom in & popup punya ruang
+map.options.maxBoundsViscosity = 1.0;  
+
+
+// Fungsi untuk sembunyikan zoom control saat popup dibuka di mobile
+if (L.Browser.mobile) {
+  // Event saat popup dibuka (detail kost diklik)
+  map.on('popupopen', function() {
+    if (map.zoomControl) {
+      map.zoomControl.getContainer().style.display = 'none';  // Sembunyikan zoom +/-
+    }
+  });
+
+  // Event saat popup ditutup (klik close button atau klik luar)
+  map.on('popupclose', function() {
+    if (map.zoomControl) {
+      map.zoomControl.getContainer().style.display = '';  // Kembalikan tampilan default
+    }
+  });
+}
+
 
 // Load data dari JSON
 let kostData = [];
-let allMarkers = L.layerGroup().addTo(map);  // grup marker supaya mudah difilter nanti
+let allMarkers = L.layerGroup().addTo(map); 
 
 fetch('data/kost.json')
   .then(response => {
@@ -37,18 +64,19 @@ fetch('data/kost.json')
   })
   .catch(error => {
     console.error('Error loading kost data:', error);
-    // Optional: tampilkan pesan di map kalau mau
+    // Optional: tampilkan pesan di map jika gagal load data
     map.attributionControl.addAttribution('Error: Data kost gagal dimuat');
   });
 
-// Fungsi render marker (dipisah supaya bisa dipanggil ulang saat filter)
+
+// Fungsi render marker
 function renderMarkers(filteredData) {
-  allMarkers.clearLayers();  // hapus marker lama
+  allMarkers.clearLayers();  
 
   filteredData.forEach(kost => {
     const marker = L.marker([kost.lat, kost.lng]);
 
-    // Tooltip sama persis seperti sebelumnya
+    // Tooltip dengan gambar miniatur
     marker.bindTooltip(`
       <b>${kost.nama}</b><br>
       <img src="${kost.foto}" alt="${kost.nama}" 
@@ -63,7 +91,7 @@ function renderMarkers(filteredData) {
       offset: [0, -10]
     });
 
-    // Popup sama persis seperti sebelumnya
+    // Popup dengan info lengkap
     marker.bindPopup(`
       <div style="width: 300px; font-family: Arial, sans-serif; line-height: 1.5;">
         <h3 style="margin: 0 0 10px; text-align: center; color: #333;">${kost.nama}</h3>
@@ -89,6 +117,18 @@ function renderMarkers(filteredData) {
   });
 }
 
+// Tambahan: buat zoom lebih smooth dengan easing custom 
+map.on('zoomstart', function(e) {
+  // Bisa tambah efek loading ringan jika mau
+});
 
-// Attribution custom (tetap)
+map.on('zoomend', function(e) {
+  
+  if (!bounds.contains(map.getCenter())) {
+    map.panTo(bounds.getCenter(), { animate: true, duration: 0.8 });
+  }
+});
+
+
+// Attribution 
 map.attributionControl.addAttribution('WebGIS Pemetaan Kost Inklusif Mahasiswa Papua | Skripsi 2025');

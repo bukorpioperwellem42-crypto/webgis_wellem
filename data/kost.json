@@ -54,6 +54,21 @@
     "status_penerimaan": "Menerima semua mahasiswa termasuk dari Papua",
     "jarak_kampus": "Dekat UNY (~1.5 km)",
     "foto": "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
-  }
+  },
+    {
+        "id": 5,
+        "nama": "Kost Mahasiswa wellem",
+        "pemilik": "Buk Endang",
+        "Notelp": "08175490250",
+        "alamat": "Gg. Pogung, Caturtunggal, Depok, Sleman",
+        "lat": -7.7760,
+        "lng": 110.4205,
+        "harga": "Rp 350.000 / bulan",
+        "fasilitas": ["WiFi", "Kamar Mandi Dalam", "Parkir Motor"],
+        "status_penerimaan": "Menerima semua mahasiswa termasuk dari Papua",
+        "jarak_kampus": "Dekat UNY (~1.5 km)",
+        "foto": "https://cdn.home-designing.com/wp-content/uploads/2015/11/glass-house-with-pool.jpg"
+    }
+
  
 ]

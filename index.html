@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Peta Kost Inklusif Mahasiswa Papua - Yogyakarta</title>
+    <link rel="icon" href="assets/logo3.svg" sizes="any">                  <!-- fallback ICO -->
+    <link rel="icon" href="assets/logo3.svg" type="image/svg+xml">         <!-- utama, skalabel -->
+    <link rel="apple-touch-icon" href="assets/logo3.svg">                  <!-- iOS/Android home screen -->
+    <title>WebGIS Kost OAP</title>
 
     <!-- Bootstrap 5 CSS -->
     <link
@@ -113,40 +116,7 @@
     justify-content: center;      /* konten vertikal center */
   }
   
-  /* Hilangkan extra padding di hero & tentang kalau mau lebih full */
-  #hero, #tentang {
-    padding-top: var(--navbar-height);
-  }
-
-        #hero h1 {
-          font-size: 2.4rem;
-          line-height: 1.05;
-        }
-        #hero .lead {
-          font-size: 1.05rem;
-        }
-
-        .navbar-brand {
-          font-size: 1.25rem;
-        }
-        .nav-link {
-          font-size: 0.95rem;
-        }
-
-        #tentang .container {
-          padding: 1.6rem;
-        }
-        #tentang h2 {
-          font-size: 1.9rem;
-        }
-        #tentang p {
-          font-size: 0.98rem;
-        }
-
-        .btn-lg {
-          padding: 0.65rem 1.25rem;
-          font-size: 1rem;
-        }
+ 
 
         /* Disable fixed background on small screens for performance */
         #tentang {
@@ -172,12 +142,34 @@
       }
     </style>
   </head>
+
+<!-- Fungsi untuk tutuo navbar di mobile -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    if (navbarCollapse) {
+      // Tutup collapse saat link di navbar diklik
+      navbarCollapse.querySelectorAll('a.nav-link').forEach(link => {
+        link.addEventListener('click', function () {
+          // Cek jika collapse sedang terbuka (class 'show')
+          if (navbarCollapse.classList.contains('show')) {
+            const collapseInstance = new bootstrap.Collapse(navbarCollapse, {
+              toggle: false
+            });
+            collapseInstance.hide();
+          }
+        });
+      });
+    }
+  });
+</script>
+
   <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
       <div class="container">
         <a class="navbar-brand fw-bold" href="index.html">
-          <i class="bi bi-geo-alt-fill me-2"></i>WebGIS OAP KOS
+          <i class="bi bi-house-heart me-2"></i>WebGIS KOS OAP
         </a>
         <button
           class="navbar-toggler"
@@ -237,25 +229,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Kontak -->
-    <!-- <section id="kontak">
-    <div class="container text-center">
-      <h2 class="display-5 fw-bold mb-5">Hubungi Kami</h2>
-      <p class="fs-4 mb-4">
-        Ada saran, info kost baru, atau pertanyaan?<br>
-        Silakan hubungi melalui:
-      </p>
-      <div class="d-flex justify-content-center gap-4 flex-wrap">
-        <a href="mailto:contoh@email.com" class="btn btn-outline-primary btn-lg">
-          <i class="bi bi-envelope-fill me-2"></i>Email
-        </a>
-        <a href="https://wa.me/628xxxxxxxxxx" target="_blank" class="btn btn-outline-success btn-lg">
-          <i class="bi bi-whatsapp me-2"></i>WhatsApp
-        </a>
-      </div>
-    </div>
-  </section> -->
 
     <!-- Footer -->
     <footer>
